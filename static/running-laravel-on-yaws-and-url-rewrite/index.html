@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    
+    <title>How to run Laravel on YAWS :</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="../favicon.ico">
+
+    
+    <link rel="stylesheet" type="text/css" href="../assets/css/screen.css?v=2519b37cc2" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Noto+Serif:400,700,400italic|Open+Sans:700,400" />
+
+    
+    <meta name="generator" content="Ghost 0.4" />
+<link rel="alternate" type="application/rss+xml" title="drlinux@localhost:~$" href="../rss/index.html">
+<link rel="canonical" href="http://my-ghost-blog.com/running-laravel-on-yaws-and-url-rewrite/" />
+</head>
+<body class="post-template tag-concurrent-world tag-php tag-yaws tag-laravel tag-erlang">
+
+    
+    
+
+
+
+<main class="content" role="main">
+
+    <article class="post tag-concurrent-world tag-php tag-yaws tag-laravel tag-erlang">
+
+        
+        <header class="post-header">
+            <a class="blog-logo" href="http://my-ghost-blog.com">
+                
+                    <img src="http://127.0.0.1:2368/content/images/2014/Jan/glider.png" alt="Blog Logo" />
+                
+            </a>
+        </header>
+
+        
+        
+
+            <span class="post-meta"><time datetime="2014-01-04">04 Jan 2014</time> on <a href="../tag/concurrent-world/index.html">concurrent world</a> | <a href="../tag/php/index.html">php</a> | <a href="../tag/yaws/index.html">yaws</a> | <a href="../tag/laravel/index.html">laravel</a> | <a href="../tag/erlang/index.html">erlang</a></span>
+
+            <h1 class="post-title">How to run Laravel on YAWS :</h1>
+
+            <section class="post-content">
+                <blockquote>
+  <p>"There is no shame in being wrong, only in failing to correct our mistakes." - <strong>George Soros</strong></p>
+</blockquote>
+
+<p><strong>Summary:</strong> In this article, I'll try to give some information about the concurrency philosophy of ERLANG. Also,I'll explain installing ERLANG, PHP (both CGI and CLI interfaces), YAWS and coding,compiling,including modules (appmode) to YAWS on an Ubuntu 12.04 based Linux distribution (elementary OS - Luna). Finally, we'll run Laravel welcome page on YAWS.</p>
+
+<p><strong>Disclaimer</strong> : The author cannot guarantee the validity of the information found here. The content of any given article may recently have been changed, vandalized or altered by someone whose opinion does not correspond with the state of knowledge or the actual product versions. The author cannot be held responsible for damages of any possible kind to you, your computer systems, your data, your working or home environment, which may be the result of direct or indirect use of the article, including documentation or software in source codes. A published article is by no means obliged to test, confirm, correct, approve the methods in an article before, after or during publishing. The article is provided at no charge. Therefore, it is completely unsupported and it is published with absolutely no warranty of any kind.</p>
+
+<h2 id="ashortintroductiontothetechnology">A short introduction to the technology :</h2>
+
+<h3 id="whatisyaws">What is YAWS?</h3>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/yaws_php_laravel_article.png" alt="Yaws Logo" /></p>
+
+<p><a href="http://hyber.org/" title="YAWS Official Page">YAWS</a> (Yet Another Webserver) is a HTTP 1.0/1.1 webserver which is completely written in <a href="http://erlang.org/" title="ERLANG Official Page">ERLANG</a>. YAWS has been noted well suited for dynamic-content web applications in many cases. YAWS can work two different mode on your project / server:</p>
+
+<ul>
+<li><p><strong>Default mode</strong> : In this mode, YAWS runs as a common webserver service (daemon) such as Apache, Nginx, IIS etc. The mode is what we'll cover during the article.</p></li>
+<li><p><strong>Embedded webserver mode</strong> : In embedded mode, YAWS runs as an embedded webserver in another ERLANG application. Although, ERLANG comes a webserver module which called as <a href="http://erlang.org/doc/man/httpd.html">httpd module</a>, it is hairy to configure and set up, and YAWS is much easier to use. Take a look at the <a href="http://www.ejabberd.im/yawspack">ejababberd</a> project to usage of YAWS in the embedded mode together several Web technologies.</p></li>
+</ul>
+
+<p>What are the key advantages of YAWS that makes different than some other well-known webservers? </p>
+
+<p>Performance, simplicity and high-availability. </p>
+
+<p>I know the answer is a little bit unclear. Let me to the explain that. <br />
+But, before the clarification, you can look a comparison YAWS and APACHE via following link:</p>
+
+<p><a href='http://www.sics.se/~joe/apachevsyaws.html'>http://www.sics.se/~joe/apachevsyaws.html</a></p>
+
+<h3 id="whatiserlang">What is ERLANG?</h3>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/erlang_width.png" alt="ERLANG Logo" /></p>
+
+<blockquote>
+  <p>ERLANG is a general-purpose functional programming language and runtime environment. ERLANG has built-in support for concurrency, distribution and fault tolerance. ERLANG is used in several large telecommunication systems from <a href="Ericsson">Ericsson</a>. ERLANG is available as open source from <a href='http://www.erlang.org'>http://www.erlang.org</a>.
+   <a href="http://www.erlang.org/faq/introduction.html">*</a></p>
+</blockquote>
+
+<p>About a year ago I met with concurrency world thanks to my dude <a href="http://kunthar.blogspot.com/">kunthar</a>. <br />
+If you're coming from of programming in imperative languages (such as C/C++, Java, Python, .Net, PHP, Ruby, PERL etc.) to ERLANG world, you have to forget most of things what you know about computer programming. ERLANG is a new thinking way -like many functional languages- which you have never been familiar. Also, I'll be covering the ERLANG in further articles.</p>
+
+<p>For having a high-available system and stable application there are some clear requirements:</p>
+
+<ul>
+<li><p>The process should be isolated and share nothing. If they share, there is no isolation, just system crashes. Hence, threads are not suitable for building a high-availability system.</p></li>
+<li><p>The process should be used as less as possible processes of operating system. Think about the JVM. When you want to execute multiple applications (which needs JVM in same machine), you have to execute a new JVM for each of them. That means, you are creating each time a new process in the operating system. This causes a well-known problem : <strong>performance downgrade</strong>! Then comes scalability problems, long start up time of applications, then new hardware budgets, less customer satisfaction blah blah blah.. The old problems.</p></li>
+<li><p>The application should be portable, platform-independent and "on-the-fly" (hot swapping / hot plugging) code fixing. </p></li>
+</ul>
+
+<p>So, the answer is :</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/erlang_movie.jpg" alt="ERLANG Movie" /></p>
+
+<h4 id="whatarethesolutionsoferlang">What are the solutions of ERLANG?</h4>
+
+<blockquote>
+  <p>"We can't solve problems by using the same kind of thinking we used when we created them." - <strong>Albert Einstein</strong></p>
+</blockquote>
+
+<p>The common question is there : If there are not neither object sharing, nor mutable state, even nor synchronized methods like locks; how <strong>communicates</strong> the processes? I'll cover a just short introduce fundamentals of ERLANG life cycle in this article. It seems a subject of an article series.</p>
+
+<p>We can group the solutions of ERLANG under two main headers:</p>
+
+<p>1 - Lightweight processes <br />
+2 - Copying &amp; Message passing</p>
+
+<h4 id="lightweightprocesses">Lightweight Processes:</h4>
+
+<p>The ERLANG Virtual Machine (ERLANG VM) runs as single OS process. ERLANG VM executes the just single operating system thread each core by default to achieve maximum efficient use of the machine.</p>
+
+<p>ERLANG processes have no connection to either OS processes or OS threads. Actually, that means concurrent process are belongs to who created them : the language, not OS. The ERLANG processes are implemented entirely by the ERLANG VM. Because of all the facts, the ERLANG processes are "lightweight processes" and naturally lighter than operating system process. So even if you have over <em>one million processes</em> it is still only single operating system processes and single thread each core. BTW it's perfectly possible to own systems running numerous concurrent ERLANG processes, actually one good example is WhatsApp :</p>
+
+<iframe src="http://player.vimeo.com/video/44312354" width="700" height="363" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+<p><br></p>
+
+<h4 id="copyingmessagepassing">Copying &amp; Message Passing :</h4>
+
+<p>Processes in ERLANG are extremely light-weight (significantly lighter than OS processes) and the amount of processes in typical any programs is large (in WhatsApp case more than hundred thousand processes on a single node). ERLANG’s concurrency fundamentals allow a process to spawn new processes and communicate with other processes through <em>asynchronous message passing</em> with <strong>copying semantics</strong>. Any kind of data value can be sent as a message and the recipient may be located on any machine on the network.</p>
+
+<blockquote>
+  <p>All data in messages between ERLANG processes is copied, with the exception of refc binaries on the same ERLANG node.<a href="http://www.erlang.org/doc/efficiency_guide/processes.html#id68345">*</a></p>
+</blockquote>
+
+<p>When a message is sent to a process on another ERLANG node, it will first be encoded to the <strong>ERLANG External Format</strong> before being sent via an TCP/IP socket. The receiving ERLANG node decodes the message and distributes it to the right process.</p>
+
+<p>Concurrency in ERLANG is achieved just by using three simple language constructs : <strong>spawn</strong>, <strong>send (!)</strong> and <strong>receive</strong>.</p>
+
+<ul>
+<li><p><strong>Pid = spawn(Function)</strong> :  Creates a new concurrent process in ERLANG VM which evaluates <strong>Function</strong>. The new process runs in parallel with the <em>caller</em>. <strong>spawn</strong> returns a <em>process identifier</em> (Pid).</p></li>
+<li><p><strong>Pid ! Message</strong> : <strong>Sends message</strong> to the process <strong>with identifier Pid</strong>. Message sending is asynchronous.</p></li>
+<li><p><strong>receive ... end</strong> : In a message passing system all process should have a mailbox, a queue of messages sent by other processes, that are not yet executed. The <strong>receive</strong> command is used to <strong>fetch</strong> messages that match targeted patterns. We can explain a bit the philosophy of concurrency in ERLANG with the following figures easier:</p></li>
+</ul>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/conc03.gif" alt="Message Passing" /></p>
+
+<p>Let's explain the above figure. Actually to understanding <strong>ERLANG message passing</strong> you can think the action as some conversation between two persons . In this figure <strong>A</strong> represents you and <strong>B</strong> is your girlfriend. And you're in a very crowded place like an airport which everybody has different names. When you want to call your girlfriend you have to say her name. Because there would be many women. Let's closer look how realize that ERLANG between processes:</p>
+
+<pre><code>B!{self(),foo} = Annie! I am here, sweety.
+</code></pre>
+
+<p>First, we calling the name of the girl (B = Annie) with our message (foo = I am here, sweety.)</p>
+
+<p><strong>self()</strong> is returns the <strong>Pid</strong> (Process Identity) of the process executing this function. The action (calling the Annie) is also a <strong>process</strong>.</p>
+
+<p>So, let's look closer to the Annie's (B) side:</p>
+
+<pre><code>recive              
+    {From,Msg}-&gt;        
+        Actions
+end
+
+
+someone is calling me (heard her name "Annie")
+    {This is Stanley, He says something (I am here, sweety.)}
+            I have to do or say something
+...
+</code></pre>
+
+<p>If you aren't dating with a <em>zombie</em> the process will be something like that. :)</p>
+
+<p>Sometimes when I read or write an ERLANG code, I feel myself in a some kind of real-life simulation. So you can think about the figures which at the below like some examples from real world.</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/conc05-1.gif" alt="concurrency programming in Erlang" /></p>
+
+<p>Media source : <a href='http://www.erlang.org/course/concurrent_programming.html'>http://www.erlang.org/course/concurrent_programming.html</a></p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/error_path.png" alt="concurrency actions" /></p>
+
+<p>Media source : <a href='http://ferd.ca/an-open-letter-to-the-erlang-beginner-or-onlooker.html'>http://ferd.ca/an-open-letter-to-the-erlang-beginner-or-onlooker.html</a> </p>
+
+<p>Looks great huh? Yes, and I think enough for this article and a PHP/Python developer. Because if I'll continue to explain; I have to cover many things that my knowledge probably not enough yet such as <strong>supervisors</strong>, <strong>garbage collection</strong>, <strong>error handling</strong> and <strong>fault tolerance</strong> in ERLANG etc.</p>
+
+<h3 id="whystillcodingphp">Why still coding PHP?</h3>
+
+<p>As a developer I believe that the tools, languages and development environments should be closer to the our project. For coding a portal that will not receive hundred thousand of requests, I'll prefer to use PHP because of its community and finding a group member is really easier than any others. So, we earn the money by realizing the wishes of who hires us. Look the chart at below an think about that :</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/serverside_language.png" alt="Languages usage in web projects" /></p>
+
+<p>If you ask the question to core development team of <a href="http://fb.com">Facebook</a> or any huge project's like facebook, probably they give an answer to you some kind of like:</p>
+
+<ul>
+<li>Still when you asking the question and also when I'm saying that the data is growing. And now also, and now also...</li>
+</ul>
+
+<p>Believe me, if I have enough money to fulfilling for a year all of my essentials, I will just learn ERLANG and an another functional programming language that not thinking like ERLANG when solving the problems. But, life is so expensive, like our experiences.</p>
+
+<h3 id="whenweneedtouseyaws">When we need to use YAWS?</h3>
+
+<p>If you face some memory problems that originating from your webserver, YAWS is a good choice in this situation. But you if you have performance problems that coming from your code, may the force be with you. First debug your code, if it doesn't work, try to :</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/rewrite.png" alt="rewrite" /></p>
+
+<h3 id="installingerlangandyawsonlinux">Installing ERLANG and YAWS on Linux</h3>
+
+<h4 id="installingerlangonlinux">Installing ERLANG on Linux :</h4>
+
+<p>I suggest to you use packages which distributing by <a href="https://www.erlang-solutions.com">Erlang Solutions</a> for installing ERLANG. Navigate the <a href='https://www.erlang-solutions.com/downloads/download-erlang-otp'>https://www.erlang-solutions.com/downloads/download-erlang-otp</a> and download your system's package. You can find there always the latest version of ERLANG as packed.</p>
+
+<p>Alternatively and my preferred way is adding repository to the package manager and install ERLANG via the package manager:</p>
+
+<pre><code>$ wget http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb &amp;&amp; sudo dpkg -i erlang-solutions_1.0_all.deb
+</code></pre>
+
+<p>Update the repository cache and install the ERLANG package :</p>
+
+<pre><code>$ sudo apt-get update &amp;&amp; sudo apt-get install erlang
+</code></pre>
+
+<p>This enough for installing ERLANG on any <strong>Ubuntu-based Linux distribution</strong>.</p>
+
+<h4 id="installingyawsonlinux">Installing YAWS on Linux :</h4>
+
+<p>First we need to get latest version of YAWS</p>
+
+<pre><code>$ wget https://github.com/klacke/yaws/archive/master.zip &amp;&amp; unzip master.zip &amp;&amp; cd yaws-master
+</code></pre>
+
+<p>Then compile &amp; install the YAWS as <strong>root</strong> :</p>
+
+<pre><code> # autoconf &amp;&amp; ./configure --sysconfdir=/etc &amp;&amp; make &amp;&amp; make install &amp;&amp; update-rc.d yaws defaults &amp;&amp; /etc/init.d/yaws start
+</code></pre>
+
+<p>That's all. Now we need to PHP and Laravel</p>
+
+<h4 id="installinglaravelphpframeworkonlinux">Installing Laravel PHP Framework on Linux :</h4>
+
+<p>YAWS supports the plain <strong>CGI</strong> for <strong>PHP</strong> very well. There are two common ways to run YAWS cgi script is either as regular CGI scripts or as PHP scripts through the <strong>php-cgi</strong> binary. So, we need to install both php-cgi and php-cli from repository. As you know <strong>Laravel</strong> needs to <strong>php-cli</strong> (PHP Command Line Interface) for installing or updating packages via <strong>composer</strong>.</p>
+
+<pre><code>$ sudo apt-get update &amp;&amp; sudo apt-get upgrade
+
+$ sudo apt-get install mysql-server mysql-client php5 php5-gd php5-mysql php5-curl php5-cli php5-cgi php5-dev php5-fpm php5-mcrypt
+</code></pre>
+
+<p>Let's do our webserver's document-root folder. I prefer to use /var/www folder. Because I keep the all data in another HDD partition which is mounted there. Executing the following single-line command as <strong>root</strong> is enough for creating the folder, installing Laravel and composer:</p>
+
+<pre><code>#mkdir /var/www &amp;&amp; cd /var/www &amp;&amp; wget http://github.com/laravel/laravel/archive/master.zip &amp;&amp; unzip master.zip &amp;&amp; rm -f master.zip &amp;&amp; mv laravel-master/* . &amp;&amp; rm -rf laravel-master/ &amp;&amp; curl -sS https://getcomposer.org/installer | php &amp;&amp; php composer.phar install
+</code></pre>
+
+<p>After all we have installed both PHP and YAWS. Well, we need to run PHP on YAWS and configure our first virtual host. As I've mentioned at the beginning of the section, YAWS supports the plain CGI. Actually, that means <em>theoretically</em>, that we can run any kind of CGI script on YAWS such as written in PERL, Python etc.. Hence, we do not need any extra modules such as <strong>lib-phpX</strong> and message passing module something like calling <strong>worker</strong> or <strong>itk</strong>.</p>
+
+<p>Btw there is a problem, YAWS doesn't support <strong>.htaccess</strong> files. May be you thinking that <strong>url rewriting</strong> is troublesome in YAWS, but it's not so. Let's create our virtual host and then take a look at the url rewriting.</p>
+
+<h4 id="configuringvirtualhostsinyaws">Configuring virtual hosts in YAWS :</h4>
+
+<p>Before start, I have to warn you about CGI <strong>FORCE_REDIRECT</strong>. Most of *nix systems compiling php-cgi without "--enable-force-cgi-redirect" by default for some security issues. </p>
+
+<h5 id="enablingurlrewritinginphpcgi">Enabling url-rewriting in php-cgi :</h5>
+
+<p>So, we need to enable <strong>CGI FORCE REDIRECT</strong> in our <strong>php-cgi's php.ini</strong>:</p>
+
+<pre><code>$ sudo cp /etc/php5/cgi/php.ini /etc/php5/cgi/php.ini.bckp
+$ sudo nano /etc/php5/cgi/php.ini
+</code></pre>
+
+<p>and navigate to the "Paths and Directories" section in the file. There is a good comment about force redirect support. So, we have two alternatives here to enable the force redirect:</p>
+
+<p>First of them is defining our doc-root :</p>
+
+<pre><code>doc_root = /var/www/public
+</code></pre>
+
+<p>Second of them is adding the following code under the section :</p>
+
+<pre><code>cgi.force_redirect = 0
+</code></pre>
+
+<p>It doesn't matter which alternative you choose. My preferred way is the second one without any reason. So now coming the funny part of the article.</p>
+
+<h5 id="writinganappmodforenablingurlrewriteonyaws">Writing an appmod for enabling url-rewrite on YAWS :</h5>
+
+<p>The main issue is that most of PHP application frameworks (like Laravel, Codeigniter, Kohana, Zend etc...) and also almost all favorite PHP applications (like Joomla, Wordpress, Drupal, Prestashop, etc..) needs a <strong>. htaccess</strong> file for defining Apache's mod_rewrite rules. Because, the applications/frameworks forwards all requests over an "index.php" file for handling the URL routing and also dedicating static files (like images, JavaScript, CSS files etc..) to serving on Apache. Sometimes the method calling as <strong>SEF</strong> (SEO Friendly URLs).</p>
+
+<p>In YAWS, appmods (application modules) are a cool way to let the application programmer take control over the URL path. <a href="http://hyber.org/appmods.yaws">*</a> </p>
+
+<p>YAWS coming with a clean and powerful API which calling as <strong>yaws_api</strong> and easily accessible under the shell:</p>
+
+<pre><code>$ man yaws_api
+</code></pre>
+
+<p>So, that means we need to code some ERLANG. Save the file with the name <strong>laravelurlrewrite.erl</strong> :</p>
+
+<pre><code>% File: laravelurlrewrite.erl
+
+-module(laravelurlrewrite).
+-author('ibrahim &lt;at&gt; drlinux.org').
+-export([out/1]).
+-include("/usr/local/lib/yaws/include/yaws_api.hrl").
+
+out(Arg) -&gt;
+  FullPathFileName = Arg#arg.docroot ++ Arg#arg.pathinfo,
+  IsStaticFile = filelib:is_regular(FullPathFileName),
+  if
+      IsStaticFile == true -&gt; % The request equals to a static file
+          [
+              {page, Arg#arg.server_path} % Let Yaws the serve file
+          ];
+      true -&gt; % Request is not equal a static file, call cgi responder
+          yaws_api:call_fcgi_responder(Arg, [
+              {extra_env, [
+                  {"SCRIPT_FILENAME", Arg#arg.docroot ++ "/index.php"}
+              ]}
+          ])
+  end.
+</code></pre>
+
+<p>Before clarification the code, we need to compile the file. First navigate to the folder where you saved the <strong>laravelurlrewrite.erl</strong> file. We have two ways to do this. First of them is using <strong>erlc</strong>, the ERLANG compiler:</p>
+
+<pre><code>$ erlc laravelurlrewrite.erl
+</code></pre>
+
+<p>The secondone is compiling the code inside the ERLANG shell (or in YAWS) with <strong>c(filename).</strong>:</p>
+
+<pre><code>    root@drlinux-samsung:~# erl
+    Erlang R14B04 (erts-5.8.5) [source] [64-bit] [smp:4:4] [rq:4] [async-threads:0] [kernel-poll:false]
+
+    Eshell V5.8.5  (abort with ^G)
+    1&gt; c(laravelurlrewrite.erl).
+</code></pre>
+
+<p>Both of two ways will create for us a <strong>beam</strong> file which is named as <strong>laravelurlrewrite.beam</strong>. The file is an Erlang Compiled Erlang Code file. Actually this is really very long to explain. But just you need to know the file can be load by ERLANG VM. </p>
+
+<h5 id="ashortintroductiontoerlangcompiler">A short introduction to ERLANG compiler :</h5>
+
+<p>The first version of Erlang <strong>compiler</strong> was developed by <a href="http://armstrongonsoftware.blogspot.com/">Joe Armstrong</a> in <a href="http://en.wikipedia.org/wiki/Prolog">Prolog language</a> in 1986. The current compiler is written in ERLANG itself. Today Erlang is compiled into two intermediate languages, first the Erlang source code is translated into something called Core Erlang and then later it is translated into BEAM assembler and then written to a binary file, a so called BEAM file. Between these different stages some code optimizations are done as well.<a href="http://uu.diva-portal.org/smash/get/diva2:428121/FULLTEXT01.pdf">*</a></p>
+
+<h4 id="loadingappmodandconfiguringthevirtualhost">Loading appmod and configuring the virtual host :</h4>
+
+<p>I prefer to keep the appmods under my application's folder together with the application files. That gives me easy manage,backup and porting my applications. But it is your choice, any directory (always accessible by the OS) suitable for keep 'em all. So, we need to create a directory and move the BEAM file into that:</p>
+
+<pre><code># mkdir /var/www/app-erlang-mods
+# cp laravelurlrewrite.erl /var/www/app-erlang-mods/
+</code></pre>
+
+<p>Let's explain the code in a short. The code basically listens all URL requests then fetching the file name with the path which requested. Then we call the ERLANG's file library for checking that "The requested file regular (did not created by any <strong>router class</strong> or something like that) or not?" As you can see above in my comments in the code, we serving the regular files on YAWS like before we did by Apache. The CGI scripts should interpret by it's interpreter. After interpreting, the result printing out by YAWS. It is an easy solution for the problem of mine, if you develop something better, please keep in touch with me. I would really like to learn some different methods. </p>
+
+<p>Also, the time is the configuring the virtual host. We need to edit just a single file :</p>
+
+<pre><code> $ sudo cp /etc/yaws/yaws.conf /etc/yaws/yaws.conf.bckp
+ $ sudo nano /etc/yaws/yaws.conf
+</code></pre>
+
+<p>The file is typical *nix configuration file probably most of *nix user already familiar with it. You should edit your virtual machine like following :</p>
+
+<pre><code># Add the path where laravelurlrewrite.beam (appmod) is located:
+ebin_dir = /var/www/app-erlang-mods
+# Virtualhost configuration
+&lt;server localhost&gt;
+      port = 80
+      listen = 0.0.0.0
+      #Add laravel's default routing path
+      docroot = /var/www/public
+      auth_log = true
+      allowed_scripts = php yaws cgi
+      #Add the path where located php-cgi
+      php_handler = &lt;cgi, "/usr/bin/php-cgi"&gt;
+      appmods = &lt;cgi-bin, laravelurlrewrite&gt;
+&lt;/server&gt;
+</code></pre>
+
+<p>After, we need to reload YAWS :</p>
+
+<pre><code># /etc/init.d/yaws restart
+</code></pre>
+
+<p>That's all guys, the result is at the below :</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/Screenshot_from_2014_01_05_18_11_05.png" alt="Laravel on YAWS Screenshot" /></p>
+
+<h3 id="summary">Summary</h3>
+
+<p>During the article I've tried to explain ERLANG's basic fundamentals, YAWS web server and working with <a href="http://laravel.com">Laravel</a> <a href="http://php.net">PHP</a> Framework on YAWS. If you are a PHP developer you <strong>must</strong> take a look at Laravel. The framework will give you %30 - %40 more time  in each project which you can spend anything else (may be learning ERLANG?).</p>
+
+<p><img src="http://127.0.0.1:2368/content/images/2014/Jan/laravel_book.jpg" alt="Laravel 4 Book" /></p>
+
+<p>You can order the book on Amazon safely. <a href='http://amzn.to/laravel-book'>http://amzn.to/laravel-book</a></p>
+
+<p>Please let me know to update the article, if you see anything that wrong.</p>
+
+<p>I'm planning to cover <a href="http://basho.com/riak/">Riak</a> in the next article. So, until I publish the article you can read about a fresh language in the concurrent world by following the white <a href="http://elixir-lang.org/">rabbit</a>.</p>
+            </section>
+
+            <footer class="post-footer">
+
+                <section class="author">
+                    <h4>H. İbrahim YILMAZ</h4>
+                    <p>Co-author of  Laravel Application Development Blueprints. Erlang, Nodejs, Riak and bass guitar learner. Smiling  from inside a house full of Linux boxes in Turkey to the World. http://okyan.us</p>
+                    <ul class="author-meta clearfix">
+                        <li>Turkey</li>
+                        <li><a href="http://okyan.us">http://okyan.us</a></li>
+                    </ul>
+                </section>
+
+                <section class="share">
+                    <h4>Share this post</h4>
+                    <a class="icon-twitter" href="https://twitter.com/share?text=How%20to%20run%20Laravel%20on%20YAWS%20%3A&amp;url=http://my-ghost-blog.com/running-laravel-on-yaws-and-url-rewrite/"
+                        onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                        <span class="hidden">Twitter</span>
+                    </a>
+                    <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://my-ghost-blog.com/running-laravel-on-yaws-and-url-rewrite/"
+                        onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                        <span class="hidden">Facebook</span>
+                    </a>
+                    <a class="icon-google-plus" href="https://plus.google.com/share?url=http://my-ghost-blog.com/running-laravel-on-yaws-and-url-rewrite/"
+                       onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                        <span class="hidden">Google+</span>
+                    </a>
+                </section>
+
+            </footer>
+
+        
+
+    </article>
+
+</main>
+
+
+    <footer class="site-footer">
+        <a class="subscribe icon-feed" href="http://my-ghost-blog.com/rss/"><span class="tooltip">Subscribe!</span></a>
+        <div class="inner">
+             <section class="copyright">All content copyright <a href="http://my-ghost-blog.com/">drlinux@localhost:~$</a> &copy; 2014 &bull; All rights reserved.</section>
+             <section class="poweredby">Proudly published with <a class="icon-ghost" href="https://ghost.org">Ghost</a></section>
+        </div>
+    </footer>
+
+    
+    <script src="../public/jquery.js?v=2519b37cc2"></script>
+
+    
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=2519b37cc2"></script>
+    <script type="text/javascript" src="../assets/js/index.js?v=2519b37cc2"></script>
+
+</body>
+</html>
