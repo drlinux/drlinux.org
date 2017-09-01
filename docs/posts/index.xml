@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>drlinux.me</title>
-    <link>http://drlinux.me/</link>
-    <description>Recent content on drlinux.me</description>
+    <title>Posts on drlinux.me</title>
+    <link>http://drlinux.me/posts/</link>
+    <description>Recent content in Posts on drlinux.me</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>tr-TR</language>
     <lastBuildDate>Fri, 01 Sep 2017 17:43:14 +0300</lastBuildDate>
     
-	<atom:link href="http://drlinux.me/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://drlinux.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
