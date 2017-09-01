@@ -1,0 +1,5 @@
+baseURL = "http://drlinux.me/"
+languageCode = "tr-TR"
+title = "drlinux.me"
+theme = "ananke"
+publishDir = "docs"
