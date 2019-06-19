@@ -1,5 +1,0 @@
-baseURL = "http://drlinux.org/"
-languageCode = "en-TR"
-title = "drlinux.org"
-theme = "ananke"
-publishDir = "docs"
