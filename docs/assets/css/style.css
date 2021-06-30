@@ -444,3 +444,8 @@ section .container {
 .credits a:hover {
   color: #fff;
 }
+
+#profile-photo{
+  border: whitesmoke;
+  border-style: solid;
+}
