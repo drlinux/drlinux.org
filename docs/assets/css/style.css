@@ -270,3 +270,10 @@ section .container {
   border-radius: 1000px;
   padding: 3px;
 }
+
+figure:hover img {
+	-webkit-filter: grayscale(100%);
+	filter: grayscale(100%);
+	-webkit-transition: .3s ease-in-out;
+	transition: .3s ease-in-out;
+}
