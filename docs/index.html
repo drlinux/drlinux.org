@@ -48,9 +48,10 @@
       </div>
       <h2>Hello, I am</h2>
       <h1><a href="index.html">H. Ibrahim YILMAZ</a></h1>
-      <h2>I'm a passionate <span>Senior DevOps Engineer</span> from Sweden.</h2>
-
-
+      <h2>I'm a passionate <span>Senior DevOps Engineer</span></h2>
+      <div id="flag">
+        <h2>from <span>Sweden</span></h2>
+      </div>
       <div class="social-links">
         <a href="https://www.linkedin.com/in/drlinux" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
         <a href="https://github.com/drlinux" target="_blank" class="github"><i class="bi bi-github"></i></a>
@@ -63,6 +64,13 @@
 
   <!-- Vendor JS Files -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+  <script>
+    window.onload = function(){
+      window.setTimeout(function(){
+        document.getElementById('cont').style.display = 'block';
+      }, 50);
+    };
+    </script>
 </body>
 
 </html>

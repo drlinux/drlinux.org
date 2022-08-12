@@ -53,7 +53,7 @@ a {
 }
 
 #header h1 {
-  font-size: 48px;
+  font-size: 30px;
   margin-top: 10px;
   margin-bottom: 10px;
   padding: 0;
@@ -144,7 +144,7 @@ a {
 
 @media (max-width: 992px) {
   #header h1 {
-    font-size: 36px;
+    font-size: 30px;
   }
   #header h2 {
     font-size: 20px;
@@ -264,11 +264,13 @@ section .container {
 }
 
 #cont {
+  display: none;
   background: -webkit-linear-gradient(left top, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
   width: 255px;
   height: 255px;
   border-radius: 1000px;
   padding: 3px;
+  margin-bottom: 20px;
 }
 
 figure:hover img {
@@ -276,4 +278,11 @@ figure:hover img {
 	filter: grayscale(100%);
 	-webkit-transition: .3s ease-in-out;
 	transition: .3s ease-in-out;
+}
+
+#flag h2 span{
+  margin-top: 0px;
+  background: linear-gradient(to top, #FECC02, #006AA7, #FECC02, #006AA7, #006AA7, #FECC02);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
