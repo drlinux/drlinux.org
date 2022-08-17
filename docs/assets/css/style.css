@@ -121,11 +121,15 @@ a {
 }
 
 #header .social-links a.medium {
-  background: #00ab6c;
+  background: #efac36;
 }
 
 #header .social-links a.youtube {
   background: #FF0000;
+}
+
+#header .social-links a.spotify {
+  background: #1DB954;
 }
 
 #header .social-links a:hover {
