@@ -277,13 +277,6 @@ section .container {
   margin-bottom: 20px;
 }
 
-figure:hover img {
-	-webkit-filter: grayscale(100%);
-	filter: grayscale(100%);
-	-webkit-transition: .3s ease-in-out;
-	transition: .3s ease-in-out;
-}
-
 #flag h2 span{
   margin-top: 0px;
   background: linear-gradient(to top, #FECC02, #006AA7, #FECC02, #006AA7, #006AA7, #FECC02);

@@ -55,7 +55,7 @@
   <header id="header">
     <div class="container">
       <div id="cont">
-        <figure><img class="rounded-circle z-depth-5" alt="H. Ibrahim YILMAZ - Senior DevOps Engineer" src="assets/img/ibrahim.png" data-holder-rendered="true"></figure>
+        <figure><img class="rounded-circle z-depth-5" alt="H. Ibrahim YILMAZ - Senior DevOps Engineer" src="assets/img/ibrahim.png" data-holder-rendered="true"  onmouseover="hover(this);" onmouseout="unhover(this);"></figure>
       </div>
       <h2>Hello, I am</h2>
       <h1><a href="index.html">H. Ibrahim YILMAZ</a></h1>
@@ -82,6 +82,13 @@
         document.getElementById('cont').style.display = 'block';
       }, 50);
     };
+    function hover(element) {
+      element.setAttribute('src', 'assets/img/ibrahim-hover.png');
+    }
+    
+    function unhover(element) {
+      element.setAttribute('src', 'assets/img/ibrahim.png');
+    }
     </script>
 </body>
 
