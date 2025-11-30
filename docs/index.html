@@ -36,16 +36,37 @@
   <!-- Canonical -->
   <link rel="canonical" href="https://drlinux.org/">
 
-  <!-- Google Analytics (async) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39209714-1"></script>
+  <!-- Google Analytics (lazy) -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'UA-39209714-1', {
-      'anonymize_ip': true,
-      'page_path': window.location.pathname
-    });
+    (function () {
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+
+      function loadAnalytics() {
+        if (window.__gaLoaded) return;
+        window.__gaLoaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=UA-39209714-1';
+        document.head.appendChild(s);
+        gtag('js', new Date());
+        gtag('config', 'UA-39209714-1', {
+          anonymize_ip: true,
+          page_path: window.location.pathname
+        });
+      }
+
+      function scheduleAnalytics() {
+        if (window.requestIdleCallback) {
+          requestIdleCallback(loadAnalytics, { timeout: 5000 });
+        } else {
+          setTimeout(loadAnalytics, 4000);
+        }
+      }
+
+      window.addEventListener('load', scheduleAnalytics, { once: true });
+      document.addEventListener('pointerdown', loadAnalytics, { once: true });
+    })();
   </script>
 
   <!-- JSON-LD Schema -->
