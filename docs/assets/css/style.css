@@ -1,7 +1,33 @@
 /*--------------------------------------------------------------
-# Font Faces - Google Fonts (remote fallback)
+# Font Faces - Local (self hosted)
 --------------------------------------------------------------*/
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Poppins:wght@500;600&family=Raleway:wght@400&display=swap");
+@font-face {
+  font-family: "Open Sans";
+  src: url("../fonts/mem8YaGs126MiZpBA-U1Ug.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/pxiByp8kv8JHgFVrLGT9Z11lEw.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/pxiByp8kv8JHgFVrLEj6Z11lEw.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("../fonts/1Ptug8zYS_SKggPNyC0IT4ttDfCmxA.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
 
 /*--------------------------------------------------------------
 # Minimal layout utilities (bootstrap replaced)
