@@ -48,6 +48,21 @@ a {
   overflow-y: auto;
 }
 
+/* TV static overlay for transition effect */
+#header::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.03) 2px, rgba(255,255,255,.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.03) 2px, rgba(255,255,255,.03) 4px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 998;
+  transition: opacity 180ms ease-in-out;
+  animation: tvStatic 0.1s steps(2) infinite;
+}
+
 #header * {
   transition: ease-in-out 0.3s;
 }
@@ -131,7 +146,9 @@ a {
 #header .social-links a.spotify {
   background: #1DB954;
 }
-
+#header .social-links a.atelje {
+  background: black;
+}
 #header .social-links a:hover {
   font-size: 16px;
   display: flex;
@@ -268,12 +285,294 @@ section .container {
 }
 
 #cont {
-  background: -webkit-linear-gradient(left top, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
-  width: 255px;
-  height: 255px;
-  border-radius: 1000px;
-  padding: 3px;
+  --ring-thickness: 6px; /* default ring thickness (half of previous 12px) */
+  position: relative;
+  width: min(255px, 36vw);
+  height: min(255px, 36vw);
+  border-radius: 50%;
   margin-bottom: 20px;
+  overflow: hidden; /* prevent visual overflow */
+  box-sizing: border-box;
+}
+
+/* rotating gradient ring placed behind the photo; image sized smaller so the ring shows */
+#cont::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* more saturated HSL colors for better contrast against dark background */
+  background: conic-gradient(from 0deg,
+    hsl(345 95% 60%),
+    hsl(320 88% 62%),
+    hsl(260 88% 60%),
+    hsl(200 88% 55%),
+    hsl(160 78% 48%),
+    hsl(120 70% 44%),
+    hsl(80 88% 50%),
+    hsl(45 92% 55%),
+    hsl(20 88% 55%)
+  );
+  z-index: 0;
+  transform-origin: center center;
+  -webkit-animation: spinScale 5s linear infinite;
+  animation: spinScale 5s linear infinite;
+  pointer-events: none; /* allow clicks through */
+  will-change: transform, filter;
+  transform: translateZ(0);
+  filter: saturate(1.35) brightness(1.08) drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+  outline: 1px solid rgba(255,255,255,0.03);
+}
+
+/* secondary blurred ring for more visible motion (parallax) */
+#cont::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* subtle secondary color overlay to enhance motion and contrast */
+  background: conic-gradient(from 180deg,
+    rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  mix-blend-mode: screen;
+  z-index: 0;
+  transform-origin: center center;
+  -webkit-animation: spinReverse 10s linear infinite;
+  animation: spinReverse 10s linear infinite;
+  filter: blur(8px) saturate(1.25) opacity(0.95);
+  pointer-events: none;
+}
+
+/* make the image slightly smaller so the ring is visible around it */
+#cont img {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - (var(--ring-thickness) * 2));
+  height: calc(100% - (var(--ring-thickness) * 2));
+  margin: var(--ring-thickness);
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  opacity: 1;
+  transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* profile video player inside the circular frame */
+.profile-video {
+  position: absolute;
+  inset: var(--ring-thickness);
+  z-index: 10;
+  width: calc(100% - (var(--ring-thickness) * 2));
+  height: calc(100% - (var(--ring-thickness) * 2));
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+#cont:hover .profile-video {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#cont:hover img {
+  opacity: 0;
+}
+
+/* starfield overlay for hover: looks like flying through stars when user hovers the photo */
+.starfield {
+  position: absolute;
+  inset: var(--ring-thickness);
+  border-radius: 50%;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 280ms ease-in-out;
+  mix-blend-mode: screen;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+/* two layered star patterns using repeated radial gradients */
+.starfield::before,
+.starfield::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.starfield::before {
+  /* small, dense stars */
+  background-image: radial-gradient(circle, rgba(255,255,255,0.95) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 0 rgba(255,255,255,0.05));
+}
+
+.starfield::after {
+  /* larger, streak-like stars */
+  background-image: radial-gradient(circle, rgba(255,255,255,0.85) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+  opacity: 0.75;
+  filter: blur(1px) contrast(1.1);
+}
+
+/* on hover show the starfield and animate the backgrounds to create motion */
+#cont:hover .starfield {
+  opacity: 1;
+}
+
+#cont:hover .starfield::before {
+  animation: starsMoveSmall 1.6s linear infinite;
+}
+
+#cont:hover .starfield::after {
+  animation: starsMoveLarge 2.6s linear infinite;
+}
+
+@keyframes starsMoveSmall {
+  from { background-position: 0 0; }
+  to   { background-position: -300px -600px; }
+}
+
+@keyframes starsMoveLarge {
+  from { background-position: 0 0; }
+  to   { background-position: 400px -800px; }
+}
+
+/* warp overlay: darken the photo area and enable lightspeed streaks */
+.warp {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  z-index: 3; /* above image, below starfield */
+  background: radial-gradient(circle at center, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.95) 100%);
+  opacity: 0;
+  transition: opacity 260ms ease-in-out, transform 260ms ease-in-out;
+  pointer-events: none;
+}
+
+/* hide the photo and show warp/starfield on hover */
+#cont:hover img {
+  opacity: 0;
+  transform: scale(1.03) translateZ(0);
+  filter: blur(2px) brightness(0.6);
+  transition: opacity 260ms ease-in-out, transform 260ms ease-in-out, filter 260ms ease-in-out;
+}
+
+#cont:hover .warp { opacity: 1; }
+
+/* trigger the dark overlay on header when #cont is hovered */
+#cont:hover ~ #header::after {
+  opacity: 1;
+}
+
+/* or use data-warp attribute set by JavaScript */
+#header[data-warp="true"]::after {
+  opacity: 1;
+}
+
+/* create a simple dark overlay on the entire header during warp */
+#cont:hover .starfield::before {
+  background-image: linear-gradient(0deg, rgba(255,255,255,0.9) 0.5px, transparent 0.5px);
+  background-size: 2px 40px;
+  opacity: 0.95;
+  animation: starsStreakSmall 0.55s linear infinite;
+}
+
+#cont:hover .starfield::after {
+  background-image: linear-gradient(0deg, rgba(255,255,255,0.9) 1px, transparent 1px);
+  background-size: 4px 120px;
+  opacity: 0.95;
+  filter: blur(2px) contrast(1.1);
+  animation: starsStreakLarge 0.9s linear infinite;
+}
+
+@keyframes starsStreakSmall {
+  from { background-position: 0 0; }
+  to   { background-position: 0 -1200px; }
+}
+
+@keyframes starsStreakLarge {
+  from { background-position: 0 0; }
+  to   { background-position: 0 -2000px; }
+}
+
+/* Dr. Who overlay: shows during warp with shake effect */
+.who {
+  position: absolute;
+  inset: var(--ring-thickness);
+  border-radius: 50%;
+  z-index: 5;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease-in-out;
+}
+
+#cont:hover .who {
+  opacity: 1;
+  animation: shake 0.15s infinite, fadeInWho 350ms ease-out forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-2px, -1px) rotate(-0.5deg); }
+  50% { transform: translate(2px, 1px) rotate(0.5deg); }
+  75% { transform: translate(-1px, 2px) rotate(-0.3deg); }
+}
+
+@keyframes tvStatic {
+  0% { background-position: 0 0, 0 0; }
+  1% { background-position: 40px 60px, 130px 270px; }
+}
+
+@keyframes fadeInWho {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+  #cont { width: min(180px, 40vw); height: min(180px, 40vw); }
+  #cont img { width: calc(100% - 18px); height: calc(100% - 18px); margin: 9px; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes spin {
+  from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+  to   { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes spinReverse {
+  from { transform: rotate(0deg) scale(1); }
+  to   { transform: rotate(-360deg) scale(1); }
+}
+
+@-webkit-keyframes spinReverse {
+  from { -webkit-transform: rotate(0deg) scale(1); transform: rotate(0deg) scale(1); }
+  to   { -webkit-transform: rotate(-360deg) scale(1); transform: rotate(-360deg) scale(1); }
+}
+
+@keyframes spinScale {
+  0% { transform: rotate(0deg) scale(1); filter: saturate(1.25) brightness(1.05) hue-rotate(0deg); }
+  50% { transform: rotate(180deg) scale(1.02); filter: saturate(1.45) brightness(1.08) hue-rotate(18deg); }
+  100% { transform: rotate(360deg) scale(1); filter: saturate(1.25) brightness(1.05) hue-rotate(0deg); }
+}
+
+@-webkit-keyframes spinScale {
+  0% { -webkit-transform: rotate(0deg) scale(1); transform: rotate(0deg) scale(1); filter: saturate(1.25) brightness(1.05) hue-rotate(0deg); }
+  50% { -webkit-transform: rotate(180deg) scale(1.02); transform: rotate(180deg) scale(1.02); filter: saturate(1.45) brightness(1.08) hue-rotate(18deg); }
+  100% { -webkit-transform: rotate(360deg) scale(1); transform: rotate(360deg) scale(1); filter: saturate(1.25) brightness(1.05) hue-rotate(0deg); }
 }
 
 #flag h2 span{
