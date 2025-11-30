@@ -1,37 +1,9 @@
 /*--------------------------------------------------------------
-# Font Faces - Local Serving
+# Font Faces - Local Serving (Optimized)
 --------------------------------------------------------------*/
 @font-face {
   font-family: "Open Sans";
-  src: url("../fonts/OpenSans-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
   src: url("../fonts/OpenSans-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("../fonts/OpenSans-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-Regular.woff2") format("woff2");
   font-weight: 400;
   font-display: swap;
 }
@@ -52,29 +24,8 @@
 
 @font-face {
   font-family: "Raleway";
-  src: url("../fonts/Raleway-Light.woff2") format("woff2");
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Raleway";
   src: url("../fonts/Raleway-Regular.woff2") format("woff2");
   font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("../fonts/Raleway-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("../fonts/Raleway-SemiBold.woff2") format("woff2");
-  font-weight: 600;
   font-display: swap;
 }
 
@@ -187,7 +138,7 @@ a {
   margin-top: 10px;
   font-size: 24px;
   color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 #header h2 span {
