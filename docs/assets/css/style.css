@@ -338,7 +338,7 @@ section .container {
     hsl(45 92% 55%),
     hsl(20 88% 55%)
   );
-  z-index: 0;
+  z-index: 9;
   transform-origin: center center;
   -webkit-animation: spinScale 5s linear infinite;
   animation: spinScale 5s linear infinite;
@@ -360,7 +360,7 @@ section .container {
   background: conic-gradient(from 180deg,
     rgba(255,255,255,0.08), rgba(255,255,255,0.02));
   mix-blend-mode: screen;
-  z-index: 0;
+  z-index: 8;
   transform-origin: center center;
   -webkit-animation: spinReverse 10s linear infinite;
   animation: spinReverse 10s linear infinite;
@@ -390,11 +390,11 @@ section .container {
   -webkit-backface-visibility: hidden;
 }
 
-/* profile video player inside the circular frame */
+/* profile video player inside the circular frame - below the ring */
 .profile-video {
   position: absolute;
   inset: var(--ring-thickness);
-  z-index: 10;
+  z-index: 5;
   width: calc(100% - (var(--ring-thickness) * 2));
   height: calc(100% - (var(--ring-thickness) * 2));
   border-radius: 50%;
@@ -422,7 +422,7 @@ section .container {
   position: absolute;
   inset: var(--ring-thickness);
   border-radius: 50%;
-  z-index: 4;
+  z-index: 6;
   pointer-events: none;
   opacity: 0;
   transition: opacity 280ms ease-in-out;
@@ -487,12 +487,12 @@ section .container {
   to   { background-position: 400px -800px; }
 }
 
-/* warp overlay: darken the photo area and enable lightspeed streaks */
+/* warp overlay: darken the photo area and enable lightspeed streaks - under starfield */
 .warp {
   position: absolute;
-  inset: 0;
+  inset: var(--ring-thickness);
   border-radius: 50%;
-  z-index: 3;
+  z-index: 4;
   background: radial-gradient(circle at center, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.95) 100%);
   opacity: 0;
   transition: opacity 260ms ease-in-out, transform 260ms ease-in-out;
