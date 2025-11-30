@@ -51,52 +51,77 @@
   <!-- JSON-LD Schema -->
   <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "@id": "https://drlinux.org/#person",
-        "name": "H. Ibrahim YILMAZ",
-        "jobTitle": "Senior DevOps Engineer",
-        "description": "Senior DevOps & Software Engineer based in Sweden, specializing in streamlining development processes and infrastructure automation.",
-        "url": "https://drlinux.org",
-        "image": "https://drlinux.org/assets/img/ibrahim.png",
-        "sameAs": [
-          "https://www.linkedin.com/in/drlinux",
-          "https://github.com/drlinux",
-          "https://medium.com/@dr.linux",
-          "https://twitter.com/drlinux_",
-          "https://www.youtube.com/channel/UCJlelvt9Onw6xnMBvIeTIrw",
-          "https://ateljevagabond.se"
-        ],
-        "worksFor": {
-          "@type": "Organization",
-          "name": "Bosch Nordic",
-          "url": "https://www.bosch.se/"
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ProfilePage",
+          "@id": "https://drlinux.org/#webpage",
+          "url": "https://drlinux.org/",
+          "name": "H. Ibrahim YILMAZ | Senior DevOps Engineer",
+          "description": "Senior DevOps & Software Engineer based in Sweden. Founder of Ateljé Vagabond.",
+          "mainEntity": {
+            "@id": "https://drlinux.org/#person"
+          }
         },
-        "founder": {
+        {
+          "@type": "Person",
+          "@id": "https://drlinux.org/#person",
+          "name": "H. Ibrahim YILMAZ",
+          "jobTitle": "Senior DevOps Engineer",
+          "description": "Senior DevOps & Software Engineer based in Sweden, specializing in streamlining development processes and infrastructure automation.",
+          "url": "https://drlinux.org",
+          "image": "https://drlinux.org/assets/img/ibrahim.png",
+          "sameAs": [
+            "https://www.linkedin.com/in/drlinux",
+            "https://github.com/drlinux",
+            "https://medium.com/@dr.linux",
+            "https://twitter.com/drlinux_",
+            "https://www.youtube.com/channel/UCJlelvt9Onw6xnMBvIeTIrw",
+            "https://ateljevagabond.se"
+          ],
+          "worksFor": [
+            {
+              "@type": "Organization",
+              "name": "Bosch Nordic",
+              "url": "https://www.bosch.se/"
+            }
+          ],
+          "knowsAbout": ["DevOps", "Infrastructure", "Cloud Computing", "CI/CD", "Kubernetes", "Docker", "Software Architecture"]
+        },
+        {
           "@type": "Organization",
+          "@id": "https://ateljevagabond.se/#organization",
           "name": "Ateljé Vagabond",
           "url": "https://ateljevagabond.se",
           "logo": "https://ateljevagabond.se/assets/images/atelje-vagabond-logo-512x512.png",
-          "description": "A multidisciplinary studio in Sweden blending handcrafted metal engraving with creative electronics and software engineering."
+          "description": "Handcrafted Metal Engraving Studio in Sweden. A small studio for curious objects blending art, code, and craft.",
+          "founder": {
+            "@id": "https://drlinux.org/#person"
+          },
+          "areaServed": {
+            "@type": "Country",
+            "name": "Sweden"
+          }
         },
-        "author": [
-            {
-                "@type": "Book",
-                "name": "Laravel Design Patterns and Best Practices",
-                "isbn": "978-1783287987",
-                "url": "https://www.amazon.com/Laravel-Design-Patterns-Best-Practices/dp/1783287985",
-                "author": { "@id": "https://drlinux.org/#person" }
-            },
-            {
-                "@type": "Book",
-                "name": "Laravel Application Development Blueprints",
-                "isbn": "978-1783282111",
-                "url": "https://www.amazon.com/Laravel-Application-Development-Blueprints-Ibrahim/dp/1783282118",
-                "author": { "@id": "https://drlinux.org/#person" }
-            }
-        ],
-        "areaServed": "SE",
-        "knowsAbout": ["DevOps", "Infrastructure", "Cloud Computing", "CI/CD", "Kubernetes", "Docker", "Software Architecture"]
+        {
+          "@type": "Book",
+          "name": "Laravel Design Patterns and Best Practices",
+          "isbn": "978-1783287987",
+          "url": "https://www.amazon.com/Laravel-Design-Patterns-Best-Practices/dp/1783287985",
+          "author": {
+            "@id": "https://drlinux.org/#person"
+          }
+        },
+        {
+          "@type": "Book",
+          "name": "Laravel Application Development Blueprints",
+          "isbn": "978-1783282111",
+          "url": "https://www.amazon.com/Laravel-Application-Development-Blueprints-Ibrahim/dp/1783282118",
+          "author": {
+            "@id": "https://drlinux.org/#person"
+          }
+        }
+      ]
     }
   </script>
 
