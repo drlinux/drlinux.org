@@ -105,12 +105,10 @@
           <source srcset="assets/img/ibrahim.webp 1x" type="image/webp">
           <img class="rounded-circle z-depth-5" src="assets/img/ibrahim.png" alt="H. Ibrahim YILMAZ - Senior DevOps Engineer" loading="eager" width="255" height="255">
         </picture>
-        <video class="profile-video" aria-hidden="true" muted playsinline loop preload="metadata">
+        <video class="profile-video" aria-hidden="true" muted playsinline preload="metadata">
           <source src="assets/video/time-travel.mp4" type="video/mp4">
         </video>
-        <div class="starfield" role="presentation"></div>
         <div class="warp" role="presentation"></div>
-        <div class="who" role="presentation"></div>
       </div>
       <h2>Hello, I am</h2>
       <h1><a href="index.html">H. Ibrahim YILMAZ</a></h1>
@@ -162,26 +160,35 @@
       function initProfileVideo() {
         const cont = document.getElementById('cont');
         const video = document.querySelector('.profile-video');
+        const img = document.querySelector('#cont img');
         
-        if (!cont || !video) return;
+        if (!cont || !video || !img) return;
         
         // Preload video metadata
         video.preload = 'metadata';
         
-        // Add event listeners
+        // Video play event
         cont.addEventListener('mouseenter', () => {
           const playPromise = video.play();
           if (playPromise !== undefined) {
             playPromise.catch(err => {
-              // Silently fail - autoplay may be blocked
               console.debug('Video playback:', err.name);
             });
           }
         });
         
+        // Video end: fade out video, fade in photo
+        video.addEventListener('ended', () => {
+          video.style.opacity = '0';
+          img.style.opacity = '1';
+        });
+        
+        // Mouse leave: pause and reset video, show photo immediately
         cont.addEventListener('mouseleave', () => {
           video.pause();
           video.currentTime = 0;
+          video.style.opacity = '0';
+          img.style.opacity = '1';
         });
         
         // Touch support for mobile
@@ -192,6 +199,8 @@
         cont.addEventListener('touchend', () => {
           video.pause();
           video.currentTime = 0;
+          video.style.opacity = '0';
+          img.style.opacity = '1';
         });
       }
     })();
