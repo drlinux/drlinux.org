@@ -1,32 +1,20 @@
 /*--------------------------------------------------------------
-# Font Faces - Local Serving (Optimized)
+# Font Faces - Google Fonts (remote fallback)
 --------------------------------------------------------------*/
-@font-face {
-  font-family: "Open Sans";
-  src: url("../fonts/OpenSans-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Poppins:wght@500;600&family=Raleway:wght@400&display=swap");
+
+/*--------------------------------------------------------------
+# Minimal layout utilities (bootstrap replaced)
+--------------------------------------------------------------*/
+.container {
+  width: min(1140px, 92vw);
+  margin: 0 auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("../fonts/Poppins-SemiBold.woff2") format("woff2");
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("../fonts/Raleway-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
+.rounded-circle {
+  border-radius: 50%;
 }
 
 /*--------------------------------------------------------------
